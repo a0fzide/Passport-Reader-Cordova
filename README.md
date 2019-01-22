@@ -38,8 +38,13 @@ passportreader.scanPassport(bacSpec, function(result) {
 		// The user canceled the scan
 		return;
 	}
-	// 
+	// See module documentation for result properties:
+	// https://appliedrecognition.github.io/Passport-Reader-Cordova/module-passportreader.html
 }, function(error) {
 	
 });
 ~~~
+
+## API Reference
+
+[Module documentation](https://appliedrecognition.github.io/Passport-Reader-Cordova/module-passportreader.html)
