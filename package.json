@@ -1,0 +1,17 @@
+{
+  "name": "Passport-Reader-Cordova",
+  "version": "1.0.0",
+  "description": "",
+  "cordova": {
+    "id": "com-appliedrec-plugins-passportreader",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "",
+  "license": "ISC"
+}

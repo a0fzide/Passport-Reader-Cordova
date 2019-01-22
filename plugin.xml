@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com-appliedrec-plugins-passportreader" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>Passport Reader</name>
+    <js-module name="Passport-Reader" src="www/Passport-Reader.js">
+        <clobbers target="window.passportreader" />
+    </js-module>
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <feature name="PassportReaderPlugin">
+                <param name="android-package" value="com.appliedrec.plugin.PassportReaderPlugin" />
+            </feature>
+        </config-file>
+        <edit-config target="AndroidManifest.xml" target="/manifest/uses-sdk" mode="overwrite">
+            <uses-sdk android:minSdkVersion="19" />
+        </edit-config>
+        <edit-config target="AndroidManifest.xml" target="/manifest/uses-permission" mode="overwrite">
+            <uses-permission android:name="android.permission.NFC" />
+        </edit-config>
+        <source-file src="src/android/com/appliedrec/plugin/PassportReaderPlugin.java" target-dir="src/com/appliedrec/plugin" />
+        <framework src="src/android/passportreader.gradle" custom="true" type="gradleReference" />
+        <framework src="com.appliedrec:mrtd-reader:1.0.0" />
+    </platform>
+</plugin>
