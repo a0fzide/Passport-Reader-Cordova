@@ -45,6 +45,34 @@ passportreader.scanPassport(bacSpec, function(result) {
 });
 ~~~
 
+## Detecting a Face in the Result's Image
+
+You can use the scan result's image for face detection using the [Ver-ID plugin](https://github.com/AppliedRecognition/Ver-ID-Person-Cordova-Plugin).
+
+After installing the Ver-ID plugin following the instructions above Ver-ID will be available in `window.verid`.
+
+See the [`Face`](https://appliedrecognition.github.io/Ver-ID-Person-Cordova-Plugin/module-verid.html#~Face) type documentation for the properties of the returned face. You can pass the face's `faceTemplate` to Ver-ID's [`compareFaceTemplates `](https://appliedrecognition.github.io/Ver-ID-Person-Cordova-Plugin/module-verid.html#.compareFaceTemplates) function.
+
+~~~javascript
+// Scan the passport
+passportreader.scanPassport(bacSpec, function(result) {
+	if (result == null) {
+		// The user canceled the scan
+		return;
+	}
+	if (result.image) {	
+		verid.detectFaceInImage(result.image, function(face) {
+		    // Face detected
+		}, function(error) {
+		    // Face detection failed
+		});
+	}
+}, function(error) {
+	
+});
+~~~
+
+
 ## API Reference
 
 [Module documentation](https://appliedrecognition.github.io/Passport-Reader-Cordova/module-passportreader.html)
