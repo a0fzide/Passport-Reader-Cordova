@@ -55,8 +55,12 @@ See the [`Face`](https://appliedrecognition.github.io/Ver-ID-Person-Cordova-Plug
 
 ~~~javascript
 var passportFaceTemplate;
-// Scan the passport
-passportreader.scanPassport(bacSpec).then(function(result) {
+
+// Load Ver-ID
+verid.load("myApiSecret").then(function() {
+	// Scan the passport
+	return passportreader.scanPassport(bacSpec);
+}).then(function(result) {
 	if (result == null) {
 		// The user canceled the scan
 		return;
