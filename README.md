@@ -33,15 +33,15 @@ var bacSpec = {
 	"dateOfExpiry": "2030-01-01",
 };
 // Start the scan
-passportreader.scanPassport(bacSpec, function(result) {
+passportreader.scanPassport(bacSpec).then(function(result) {
 	if (result == null) {
 		// The user canceled the scan
 		return;
 	}
 	// See module documentation for result properties:
 	// https://appliedrecognition.github.io/Passport-Reader-Cordova/module-passportreader.html
-}, function(error) {
-	
+}).catch(function(error) {
+	// The scan failed
 });
 ~~~
 
@@ -54,21 +54,38 @@ After installing the Ver-ID plugin following the instructions above Ver-ID will 
 See the [`Face`](https://appliedrecognition.github.io/Ver-ID-Person-Cordova-Plugin/module-verid.html#~Face) type documentation for the properties of the returned face. You can pass the face's `faceTemplate` to Ver-ID's [`compareFaceTemplates `](https://appliedrecognition.github.io/Ver-ID-Person-Cordova-Plugin/module-verid.html#.compareFaceTemplates) function.
 
 ~~~javascript
+var passportFaceTemplate;
 // Scan the passport
-passportreader.scanPassport(bacSpec, function(result) {
+passportreader.scanPassport(bacSpec).then(function(result) {
 	if (result == null) {
 		// The user canceled the scan
 		return;
 	}
-	if (result.image) {	
-		verid.detectFaceInImage(result.image, function(face) {
-		    // Face detected
-		}, function(error) {
-		    // Face detection failed
-		});
+	// Detect face in the passport image
+	return verid.detectFaceInImage(result.image);
+}).then(function(face) {
+	if (!face) {
+		// Canceled scan
+		return;
 	}
-}, function(error) {
-	
+	passportFaceTemplate = face.faceTemplate;
+	var settings = new verid.LivenessDetectionSessionSettings();
+	settings.includeFaceTemplatesInResult = true;
+	return verid.captureLiveFace(settings);
+}).then(function(result) {
+	if (!result || result.outcome == verid.SessionOutcome.CANCEL) {
+		// Canceled session
+		return;
+	}
+	if (result.outcome == verid.SessionOutcome.SUCCESS) {
+		return verid.compareFaceTemplates(result.getFaces(verid.Bearing.STRAIGHT)[0].faceTemplate, passportFaceTemplate);
+	} else {
+		throw new Error(result.outcome);
+	}
+}).then(function(score) {
+	alert("Similarity score: "+score);
+}).catch(function(error) {
+	console.log(error);
 });
 ~~~
 

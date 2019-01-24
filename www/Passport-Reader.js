@@ -39,17 +39,27 @@ var PLUGIN_NAME = "PassportReaderPlugin";
 /**
  * Scan a biometric passport and return the data extracted from its NFC chip
  * @param {module:passportreader~BACSpec} bacSpec BAC spec
- * @param {module:passportreader~PassportScanCallback} callback Called when passport scan finishes
- * @param {function} errorCallback Called when passport scan fails
+ * @param {module:passportreader~PassportScanCallback} [callback] Called when passport scan finishes
+ * @param {function} [errorCallback] Called when passport scan fails
+ * @returns {Promise.<module:passportreader~ScanResult>} If callback is not specified returns a promise
  */
 module.exports.scanPassport = function(bacSpec, callback, errorCallback) {
     var args = [{"bacSpec":JSON.stringify(bacSpec)}];
-    exec(function(json) {
-        if (json) {
-            var result = JSON.parse(json);
-            callback(result);
-        } else {
-            callback();
+    function parseResult(cb) {
+        return function(json) {
+            if (json) {
+                var result = JSON.parse(json);
+                cb(result);
+            } else {
+                cb();
+            }
         }
-    }, errorCallback, PLUGIN_NAME, "scanPassport", args);
+    }
+    if (callback) {
+        exec(parseResult(callback), errorCallback, PLUGIN_NAME, "scanPassport", args);
+    } else {
+        return new Promise(function(resolve, reject) {
+            exec(parseResult(resolve), reject, PLUGIN_NAME, "scanPassport", args);
+        });
+    }
 }
